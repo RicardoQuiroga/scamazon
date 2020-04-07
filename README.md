@@ -5,6 +5,8 @@ Feel free to write any bugs or thoughts you come across here.
 
 OUTLINE:
 
+(I seperated the login categories between customers/employees. can be changed if we want)
+
 -Asks a user for their username and password. Along with an option to create a new user
 	-if the user doesn't exist, inform that the user is not found
 	-if the user exists but the password is wrong. Inform the user
