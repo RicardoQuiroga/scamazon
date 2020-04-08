@@ -62,16 +62,17 @@ DROP TABLE IF EXISTS `scamazon`.`categories`;
 
 CREATE TABLE `scamazon`.`categories` (
     `category` INT NOT NULL AUTO_INCREMENT,
+    `categoryName` VARCHAR(45) NOT NULL,
     `empID` INT NOT NULL,
     `description` tinytext NOT NULL,
     PRIMARY KEY (`category`),
     FOREIGN KEY (`empID`) REFERENCES `scamazon`.`emp` (`empID`)
 );
 
-INSERT INTO `scamazon`.`categories` VALUES (1, 2, 'Books that you probably don''t want to read!'),
-(2, 1, 'Movies that are all around considered bad!'),
-(3, 5, 'Only the best videogames with a 50% or below average review score!'),
-(4, 3, 'Gadgets and doodads that probably won''t blow up..');
+INSERT INTO `scamazon`.`categories` VALUES (1, 'Books', 2, 'Books that you probably don''t want to read!'),
+(2, 'Movies', 1, 'Movies that are all around considered bad!'),
+(3, 'Videogames', 5, 'Only the best videogames with a 50% or below average review score!'),
+(4, 'Hardware', 3, 'Gadgets and doodads that probably won''t blow up..');
 
 /* All products sold are on-hand, so handling restocking through the database is unnecessary */
 
