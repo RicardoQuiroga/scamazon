@@ -79,7 +79,7 @@ public class Scamazon_Application {
 			
 			if (userLogin.next()) {
 				valid = true;
-				employeeOptions(myCon, user);
+				employeeOptions(myCon, user, userid);
 			}
 			
 			if (valid == false) {
@@ -127,9 +127,51 @@ public class Scamazon_Application {
 		}
 	}
 
-	public static void employeeOptions(Connection myCon, Scanner user) throws SQLException {
+	public static void employeeOptions(Connection myCon, Scanner user, String empID) throws SQLException {
 		try {
-			System.out.println("Employee");
+			//Get the category to be modified
+			int i = 0;
+			Statement stat = myCon.createStatement();
+			ResultSet rs  = stat.executeQuery("SELECT c.categoryName, e.empName FROM categories c, emp e WHERE e.empID = c.empID AND c.empID = \'" + empID + "\'");
+			while (rs.next()) {
+				if (i == 0) {
+					System.out.println("Hi, " + rs.getString(2) + "! Select a category you would like to modify:");
+					System.out.println("---------------------------------------");
+				}
+				System.out.println(++i + ": " + rs.getString(1));
+			}
+			String selection = user.nextLine();
+			if (checkInt(selection) == -1 || selection.compareTo("") == 0 || checkInt(selection) > i) {
+				while (checkInt(selection) == -1 || selection.compareTo("") == 0 || checkInt(selection) > i) {
+					System.out.println("\nError: You must input an integer value of your categories for your selection!");
+					selection = user.nextLine();
+				}
+			}
+			rs = stat.executeQuery("SELECT categoryName FROM categories WHERE category = " + Integer.parseInt(selection));
+			while (rs.next()) System.out.println("\nNow modifying " + rs.getString(1) + "\n\n---------------------------------------");
+
+			//Get the action to be taken
+			System.out.println("Would you like to add, delete, or modify an item in the table?");
+			System.out.println("1: Add a new item \n2: Delete an existing item \n3: Modify an existing item\n");
+			selection = user.nextLine();
+			if (checkInt(selection) == -1 || selection.compareTo("") == 0 || checkInt(selection) > 3) {
+				while (checkInt(selection) == -1 || selection.compareTo("") == 0 || checkInt(selection) > i) {
+					System.out.println("\nError: You must input an integer value for your selection!");
+					selection = user.nextLine();
+				}
+			}
+			switch (Integer.parseInt(selection)) {
+				case 1:
+				System.out.println("Adding a new item...");
+				break;
+				case 2:
+				System.out.println("Deleting an existing item...");
+				break;
+				case 3:
+				System.out.println("Modifying an existing item...");
+				break;
+			}
+			
 		}catch (Exception e) {
 			System.out.println(e);
 		}
@@ -148,6 +190,15 @@ public class Scamazon_Application {
 			
 		}catch (Exception e) {
 			System.out.println(e);
+		}
+	}
+
+	public static int checkInt(String s) {
+		try {
+			int i = Integer.parseInt(s);
+			return i;
+		} catch (NumberFormatException e) {
+			return -1;
 		}
 	}
 }
