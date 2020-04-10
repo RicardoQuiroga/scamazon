@@ -86,7 +86,7 @@ CREATE TABLE `scamazon`.`items` (
     `itemStock` INT NOT NULL,
     `onOrder` INT NOT NULL,
     `description` tinytext NOT NULL,
-    `avgRating` INT,
+    `avgRating` INT DEFAULT NULL,
     PRIMARY KEY (`itemID`),
     FOREIGN KEY (`itemCategory`) REFERENCES `scamazon`.`categories` (`category`)
 );
