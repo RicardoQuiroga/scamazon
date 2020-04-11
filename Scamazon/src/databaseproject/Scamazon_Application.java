@@ -9,7 +9,7 @@ public class Scamazon_Application {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			Connection myCon = DriverManager.getConnection(
-					"jdbc:mysql://localhost:3306/scamazon?useSSL=false&useLegacyDatetimeCode=false&serverTimezone=UTC",
+					"jdbc:mysql://localhost:3306/scamazon?useSSL=false&allowPublicKeyRetrieval=true&useLegacyDatetimeCode=false&serverTimezone=UTC",
 					"cs4430", "cs4430");
 
 			Scanner user = new Scanner(System.in);
@@ -151,8 +151,8 @@ public class Scamazon_Application {
 			while (rs.next()) System.out.println("\nNow modifying " + rs.getString(1) + "\n\n---------------------------------------");
 
 			//Get the action to be taken
-			System.out.println("Would you like to add, delete, or modify an item in the table?");
-			System.out.println("1: Add a new item \n2: Delete an existing item \n3: Modify an existing item\n");
+			System.out.println("Would you like to add, remove, or modify an item in the table?");
+			System.out.println("1: Add a new item \n2: Remove an existing item \n3: Modify an existing item\n");
 			String action = user.nextLine();
 			if (checkInt(action) < 0 || action.compareTo("") == 0 || checkInt(action) > 3) {
 				while (checkInt(action) < 0 || action.compareTo("") == 0 || checkInt(action) > 3) {
@@ -168,7 +168,8 @@ public class Scamazon_Application {
 				addItem(myCon, user, Integer.parseInt(selection));
 				break;
 				case 2:
-				System.out.println("Deleting an existing item...");
+				System.out.println("Removing an existing item...");
+				removeItem(myCon, user, Integer.parseInt(selection));
 				break;
 				case 3:
 				System.out.println("Modifying an existing item...");
@@ -238,8 +239,52 @@ public class Scamazon_Application {
 			int rs2 = stat.executeUpdate("INSERT INTO items (itemName, itemCategory, itemPrice, itemStock, onOrder, description) VALUES ('" 
 			+ newItem[0] + "', " + category + ", " + newItem[1] + ", " + newItem[2] + ", " + newItem[3] + ", '" + newItem[4] + "');");
 			System.out.println(newItem[0] + " added to items!");
+			if (rs2 == 0) System.out.println("Error: Something went wrong when adding to the database.");
+			else System.out.println("Succesfully added " + newItem[0] + " to items!");
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	public static void removeItem(Connection myCon, Scanner user, int category) throws SQLException {	
+		try {
+			//Get info for removal
+			String curInfo = null;
+			System.out.println("Enter the name of the item you would like removed");
+			curInfo = user.nextLine();
+			if (curInfo.compareTo("") == 0) {
+				while (curInfo.compareTo("") == 0) {
+					System.out.println("Error: You must input something!");
+					curInfo = user.nextLine();
+	
+				}
+			}
+
+			//Check if item exists in different category:
+			Statement stat = myCon.createStatement();
+			ResultSet rs = stat.executeQuery("SELECT itemName FROM items WHERE itemCategory <> " + category + ";");
+			while (rs.next()) {
+				String name = rs.getString(1);
+				if (curInfo.compareToIgnoreCase(name) == 0) {
+					System.out.println("Error: " + name + " is in a different category!");
+					return;
+				}
+			}
+
+			//Remove item
+			int rs2 = stat.executeUpdate("DELETE FROM items WHERE itemName = '" + curInfo + "';");
+			if (rs2 == 0) System.out.println("Error: Something went wrong when adding to the database.");
+			else System.out.println("Successfully removed " + curInfo + " to items!");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void modItem(Connection myCon, Scanner user, int category) throws SQLException {
+		try {
+
+		} catch (Exception e) {
+
 		}
 	}
 
