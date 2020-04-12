@@ -173,6 +173,7 @@ public class Scamazon_Application {
 				break;
 				case 3:
 				System.out.println("Modifying an existing item...");
+				modItem(myCon, user, Integer.parseInt(selection));
 				break;
 			}
 			
@@ -236,10 +237,9 @@ public class Scamazon_Application {
 			}
 
 			//Insert into items
-			int rs2 = stat.executeUpdate("INSERT INTO items (itemName, itemCategory, itemPrice, itemStock, onOrder, description) VALUES ('" 
-			+ newItem[0] + "', " + category + ", " + newItem[1] + ", " + newItem[2] + ", " + newItem[3] + ", '" + newItem[4] + "');");
-			System.out.println(newItem[0] + " added to items!");
-			if (rs2 == 0) System.out.println("Error: Something went wrong when adding to the database.");
+			if (stat.executeUpdate("INSERT INTO items (itemName, itemCategory, itemPrice, itemStock, onOrder, description) VALUES ('" 
+			+ newItem[0] + "', " + category + ", " + newItem[1] + ", " + newItem[2] + ", " + newItem[3] + ", '" + newItem[4] + "');") == 0) 
+			System.out.println("Error: Something went wrong when adding to the database.");
 			else System.out.println("Succesfully added " + newItem[0] + " to items!");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -250,7 +250,7 @@ public class Scamazon_Application {
 		try {
 			//Get info for removal
 			String curInfo = null;
-			System.out.println("Enter the name of the item you would like removed");
+			System.out.println("Enter the name of the item you would like removed.");
 			curInfo = user.nextLine();
 			if (curInfo.compareTo("") == 0) {
 				while (curInfo.compareTo("") == 0) {
@@ -260,7 +260,7 @@ public class Scamazon_Application {
 				}
 			}
 
-			//Check if item exists in different category:
+			//Check if item exists in different category
 			Statement stat = myCon.createStatement();
 			ResultSet rs = stat.executeQuery("SELECT itemName FROM items WHERE itemCategory <> " + category + ";");
 			while (rs.next()) {
@@ -282,9 +282,153 @@ public class Scamazon_Application {
 
 	public static void modItem(Connection myCon, Scanner user, int category) throws SQLException {
 		try {
+			//Get info for modification
+			String curInfo = null;
+			System.out.println("Enter the name of the item you would like to modify.");
+			curInfo = user.nextLine();
+			if (curInfo.compareTo("") == 0) {
+				while (curInfo.compareTo("") == 0) {
+					System.out.println("Error: You must input something!");
+					curInfo = user.nextLine();
+				}
+			}
 
+			//Check if the item exists
+			boolean foundItem = false;
+			String fItemName = null;
+			int fItemCategory = 0;
+			double fItemPrice = 0;
+			int fItemStock = 0;
+			String fItemDesc = null;
+			Statement stat = myCon.createStatement();
+			ResultSet rs = stat.executeQuery("SELECT itemName, itemCategory, itemPrice, itemStock, description FROM items WHERE itemCategory = " + category + " AND itemName = '" + curInfo + "';");
+			while (rs.next()) {
+				if (rs.getString(1).compareToIgnoreCase(curInfo) == 0) {
+					fItemName = rs.getString(1);
+					fItemCategory = rs.getInt(2);
+					fItemPrice = rs.getDouble(3);
+					fItemStock = rs.getInt(4);
+					fItemDesc = rs.getString(5);
+					foundItem = true;
+					break;
+				}
+			}
+			if (!foundItem) {
+				System.out.println("Error: could not find " + curInfo + " in this category.");
+				return;
+			}
+
+			//Get field for modification
+			String fields[] = new String[] {"", "itemName", "itemCategory", "itemPrice", "itemStock", "description"};
+			System.out.println("Enter the field that you would like to modify:");
+			for (int i = 1; i < fields.length; i++) {
+				System.out.println(i + ": " + fields[i]);
+			}
+			int fieldSel = checkInt(user.nextLine());
+			while (fieldSel < 1 || fieldSel > 5) {
+				System.out.println("Error: Your choice must be an integer value displayed above");
+				fieldSel = checkInt(user.nextLine());
+			}
+
+			//Modify selected field
+			boolean isString = false;
+			String updateField = fields[fieldSel];
+			String updateContent = null;
+			double updateContentD = 0;
+			switch (fieldSel) {
+				case 1:
+				isString = true;
+				System.out.println("Enter the new name you would like:");
+				updateContent = user.nextLine();
+				while (updateContent.compareTo("") == 0) {
+					System.out.println("Error: you must input something!");
+					updateContent = user.nextLine();
+				}
+				System.out.println("ORIGINAL NAME: " + fItemName + " | NEW NAME: " + updateContent + 
+				"\nEnter 'confirm' to confirm the change:");
+				if ((user.nextLine()).compareToIgnoreCase("confirm") == 0) {
+					System.out.println("Making changes...");
+					updateContent = "'" + updateContent + "'";
+				} else {
+					System.out.println("Aborting changes...");
+					return;
+				}
+				break;
+				case 2:
+				System.out.println("Enter the new item category:");
+				updateContentD = checkInt(user.nextLine());
+				while (updateContentD < 0) {
+					System.out.println("Error: you must input an integer value!");
+					updateContentD = checkInt(user.nextLine());
+				}
+				System.out.println("ORIGINAL CATEGORY: " + fItemCategory + " | NEW CATEGORY: " + updateContentD +
+				"\nEnter 'confirm' to confirm the change:");
+				if ((user.nextLine()).compareToIgnoreCase("confirm") == 0) {
+					System.out.println("Making changes...");
+				} else {
+					System.out.println("Aborting changes...");
+					return;
+				}
+				break;
+				case 3:
+				System.out.println("Enter the new price:");
+				updateContentD = checkDouble(user.nextLine());
+				while (updateContentD < 0) {
+					System.out.println("Error: you must input a double value!");
+					updateContentD = checkDouble(user.nextLine());
+				}
+				System.out.println("ORIGINAL PRICE: " + fItemPrice + " | NEW PRICE: " + updateContentD + 
+				"\nEnter 'confirm' to confirm the change:");
+				if ((user.nextLine()).compareToIgnoreCase("confirm") == 0) {
+					System.out.println("Making changes...");
+				} else {
+					System.out.println("Aborting changes...");
+					return;
+				}
+				break;
+				case 4:
+				System.out.println("Enter the new amount of stock:");
+				updateContentD = checkInt(user.nextLine());
+				while (updateContentD < 0) {
+					System.out.println("Error: you must input an integer value!");
+					updateContentD = checkInt(user.nextLine());
+				}
+				System.out.println("ORIGINAL STOCK: " + fItemStock + " | NEW STOCK: " + updateContentD +
+				"\nEnter 'confirm' to confirm the change:");
+				if ((user.nextLine()).compareToIgnoreCase("confirm") == 0) {
+					System.out.println("Making changes...");
+				} else {
+					System.out.println("Aborting changes...");
+					return;
+				}
+				break;
+				case 5:
+				isString = true;
+				System.out.println("Enter the new description:");
+				updateContent = user.nextLine();
+				while (updateContent.compareTo("") == 0) {
+					System.out.println("Error: you must input something!");
+					updateContent = user.nextLine();
+				}
+				System.out.println("ORIGINAL DESCRIPTION: " + fItemDesc + " | NEW DESCRIPTION: " + updateContent + 
+				"\nEnter 'confirm' to confirm the change:");
+				if ((user.nextLine()).compareToIgnoreCase("confirm") == 0) {
+					System.out.println("Making changes...");
+					updateContent = "'" + updateContent + "'";
+				}
+				break;
+			}
+		if (isString) {
+			if (stat.executeUpdate("UPDATE items SET " + updateField + " = " + updateContent + "WHERE itemName = '" + curInfo + "';") == 0) {
+				System.out.println("Error: could not update.");
+			} else System.out.println("Successfully updated!");
+		} else {
+			if (stat.executeUpdate("UPDATE items SET " + updateField + " = " + updateContentD + "WHERE itemName = '" + curInfo + "';") == 0) {
+				System.out.println("Error: could not update.");
+			} else System.out.println("Successfully updated!");
+		}
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 	}
 
