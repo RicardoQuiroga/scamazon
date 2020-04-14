@@ -20,8 +20,7 @@ public class Scamazon_Application {
 				System.out.println("1: Log in");
 				System.out.println("2: Reset Password");
 				System.out.println("3: Create Account");
-				System.out.println("4: Exit");
-				System.out.println();
+				System.out.println("4: Exit\n");
 				String input = user.nextLine();
 				
 				if (input.equals("1")) {
@@ -36,7 +35,7 @@ public class Scamazon_Application {
 				else if (input.equals("4")) {
 					loop = 0;
 				} else {
-					System.out.println("Please enter a valid input.");
+					System.out.println("Please enter a valid input.\n");
 				}
 			}
 			System.out.println("Now exiting. Thank you for choosing Scamazon");
@@ -51,7 +50,7 @@ public class Scamazon_Application {
 			boolean valid = false;
 			//will first determine if user is customer or employee. Will allow different options for different people
 			System.out.print("Enter Username or Employee ID:  ");
-			String userid = user.nextLine();
+			String userID = user.nextLine();
 			System.out.println();
 			System.out.print("Enter Password:  ");
 			String password = user.nextLine();
@@ -59,31 +58,30 @@ public class Scamazon_Application {
 			
 			//prevents SQLInjection from login attempts
 			PreparedStatement login = myCon.prepareStatement("Select * from users where userid=? and userpass=?");
-			login.setString(1, userid.trim());
+			login.setString(1, userID.trim());
 			login.setString(2, password.trim());
 			ResultSet userLogin = login.executeQuery();
 			
-			//if user exists go to customer method
+			//if user exists create users class
 			if (userLogin.next()) {
 				valid = true;
-				System.out.println("Welcome to Scamazon " + userid);
-				System.out.println();
-				customerOptions(myCon, user);
+				System.out.println("Welcome to Scamazon " + userID +"\n");
+				Scamazon_Users.customerOptions(myCon, user, userID);
 			}
 
-			
 			login = myCon.prepareStatement("Select * from emp where empid=? and empPass=?");
-			login.setString(1, userid.trim());
+			login.setString(1, userID.trim());
 			login.setString(2, password.trim());
 			userLogin = login.executeQuery();
 			
+			//if employee exists create emp class
 			if (userLogin.next()) {
 				valid = true;
-				Scamazon_Emp.employeeOptions(myCon, user, userid);
+				Scamazon_Emp.employeeOptions(myCon, user, userID);
 			}
 			
 			if (valid == false) {
-				System.out.println("Either the Username doesn't exist or the Password was incorrect.");
+				System.out.println("Either the Username doesn't exist or the Password was incorrect.\n");
 			}
 		}
 		catch (Exception e) {
@@ -91,41 +89,6 @@ public class Scamazon_Application {
 		}
 	}
 	
-	public static void customerOptions(Connection myCon, Scanner user) throws SQLException {
-		//not finished with this, but its a good start
-		try {
-			boolean loop = true;
-			while (loop == true) {
-				
-			int count = 1;
-			Statement stat1 = myCon.createStatement();
-			ResultSet products = stat1.executeQuery("select description from categories");
-			System.out.println("Select a Category of Product: (1-4)");
-			while (products.next()) {
-				System.out.println(count + ": " + products.getString(1));
-				count++;
-			}
-			System.out.println();
-			String input = user.nextLine();
-			ResultSet items = stat1.executeQuery("select itemName, itemPrice, itemStock, description from items where itemcategory = " 
-					+ "'" + input + "'");
-			System.out.println();
-			
-			while(items.next()) {
-				System.out.println(items.getString(1) + ", Price:" + items.getString(2) + ", Supply:" + items.getString(3));
-				System.out.println(items.getString(4));
-				System.out.println();	
-			}
-			System.out.println("Enter to continue, Enter 0 to exit.");
-			input = user.nextLine();
-			if (input.equals("0")) {
-				loop = false;
-			}
-			}
-		}catch (Exception e) {
-			System.out.println(e);
-		}
-	}
 	
 	public static void resetPassword(Connection myCon, Scanner user) throws SQLException {
 		try {
