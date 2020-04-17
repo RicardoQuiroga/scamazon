@@ -13,18 +13,19 @@ CREATE TABLE `scamazon`.`emp` (
   `empID` INT NOT NULL AUTO_INCREMENT,
   `empPass` VARCHAR(45) NOT NULL,
   `empName` VARCHAR(45) NOT NULL,
-  `empAddress` VARCHAR(45) NULL DEFAULT 'n/a',
+  `empAddress` VARCHAR(45) DEFAULT 'n/a',
   `empActive` VARCHAR(1) NOT NULL DEFAULT 'y',
   `empSalary` INT NULL DEFAULT 0,
   PRIMARY KEY (`empID`)
 );
 
-INSERT INTO `scamazon`.`emp` VALUES (1, 'password', 'Rick Quiroga', '123 test ln.', 'y', 3),
-(2, 'whatsapassword', 'Gibbard McChico', '456 down the st.', 'y', 55555555),
-(3, 'soupinmypocket!', 'Mr. Soup', '11 Soup blvd.', 'y', 9880),
-(4, 'iamsecretelyadog33*', 'Not Dogman', 'Dog st.', 'n', 0),
-(5, '12345', 'Charlie Barley', '448 House rd.', 'y', 33000),
-(6, 'timelord', 'Maxwell Keeper', '22 Home ave.', 'n', 12000);
+INSERT INTO `scamazon`.`emp` VALUES (1, 'iAmBigMan', 'Admin', NULL, 'y', 99999),
+(2, 'password', 'Rick Quiroga', '123 test ln.', 'y', 3),
+(3, 'whatsapassword', 'Gibbard McChico', '456 down the st.', 'y', 55555555),
+(4, 'soupinmypocket!', 'Mr. Soup', '11 Soup blvd.', 'y', 9880),
+(5, 'iamsecretelyadog33*', 'Not Dogman', 'Dog st.', 'n', 0),
+(6, '12345', 'Charlie Barley', '448 House rd.', 'y', 33000),
+(7, 'timelord', 'Maxwell Keeper', '22 Home ave.', 'n', 12000);
 
 /* Holds info needed for when a user wants to place an order, as well as their status */
 /* NOTE: User states = 1 - new, 2 - regular, 3 - prestige */

@@ -76,7 +76,8 @@ public class Scamazon_Application {
 			if (userLogin.next()) {
 				if (userLogin.getString(1).equals(userID) && userLogin.getString(2).equals(password)) {
 					valid = true;
-					Scamazon_Emp.employeeOptions(myCon, user, userID);
+					if (userLogin.getString(1).equals("1")) Scamazon_Admin.adminOptions(myCon, user);
+					else Scamazon_Emp.employeeOptions(myCon, user, userID);
 				}
 			}
 

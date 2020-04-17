@@ -287,7 +287,7 @@ public class Scamazon_Users {
 				System.out.println("You have not placed any orders.\n");
 			}
 		} catch (Exception e) {
-			 System.out.println("Please enter a valid review score.\n");
+			System.out.println("Please enter a valid review score.\n");
 		}
 	}
 
