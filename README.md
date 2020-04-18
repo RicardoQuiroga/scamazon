@@ -5,12 +5,13 @@ Feel free to write any bugs or thoughts you come across here.
 
 OUTLINE:
 
-(I seperated the login categories between customers/employees. can be changed if we want)
 
 -Asks a user for their username and password. Along with an option to create a new user
-	-if the user doesn't exist, inform that the user is not found
-	-if the user exists but the password is wrong. Inform the user
-	-NOTE: I'm not too worried about sanitization of input since this isn't a public thing
+	-will differentiate between user, employee and admin login and will allow for different features
+	-informs user if either the username is incorrect or the password is incorrect
+	-use preparedstatements to sanitize input in login phase
+	-user is informed if the account ID is already in use when creating account
+	-can only be used to create a customer account
 
 -IF THE USER IS NOT THE ADMIN OR AN EMP
 	-PRINT OUT the categories that are available to buy from to the user
@@ -21,24 +22,36 @@ OUTLINE:
 			-if the item has >= 5 in stock, just print in stock
 			-if < 5, print how many are left
 			-if out of stock, print out of stock for that item
+	-the user can select an item to view the reviews of the item
+		-informs user if there are no reviews for that item
 	-the user can choose multiple items to add to a 'cart'
 		-if the user tries to add something that doesn't exist, inform the user
-		-would probably be easier to make a limited size cart as opposed to unlimited
+		-if the user tries to order more units that are in stock inform the user and do not add to cart
+		-cart stores product information and the quantity ordered
 		-everytime something is added, let the user know how many items are in the cart
+	-the user can check the items, price and quantity ordered of each item in their cart prior to checkout
 	-once the user is done selecting items to purchase, go to a checkout process
 		-ask the user if they want the items shipped to their current stored address
 			-if yes, continue
 			-if no, ask the user for the new information and modify their address info appropriately
 		-if the order goes through correctly, inform the user, modify the appropriate database fields, and back out to categories
-	-give the option to post a review in the same screen as category selection
+		-lower supply of items based on the quantity ordered
+		-empty cart after successful order
+	-give the option to post a review in the main menu selection
 		-list the items the user has ordered and ask which the user would like to review
 			-if the user has not ordered any anything, inform the user and back out to categories
+			-lists in order of itemID and will only display one per distinct item
 		-when the user chooses one of the options, take input for the review
-		-give the option to post an image
-			-right now it'll just be a image reference
 		-take an int for rating
 		-add the review to reviews
-		-modify the avgRating in images by adding all ratings for the item and dividing by the amount of reviews
+		-modify the avgRating in reviews by taking the average amount of ratings
+		-if rating is null set to initial rating score
+		-the user can modify their review if they had already placed a review for that certain product
+		-users cannot place multiple reviews for any given product
+	-user can choose to change their password
+		-will check to see if both password inputs are the same and update database accordingly
+	-empty cart upon logout
+		
 
 -IF THE USER IS AN EMP
 	-give the option of which category to modify, since an employee may manage multiple categories
