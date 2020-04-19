@@ -278,11 +278,11 @@ public class Scamazon_Emp {
 		if (stat.executeUpdate("UPDATE items SET " + updateField + " = " + updateContent + " WHERE itemName = '"
 				+ curInfo + "';") == 0) {
 			System.out.println("Error: could not update.");
-			System.out.println("---------------------------------------");
 		} else {
 			System.out.println("Updated succesfully!");
-			System.out.println("---------------------------------------");
+
 		}
+		System.out.println("---------------------------------------");
 	}
 
 	public static void modInt(Connection myCon, Scanner user, String curInfo, String updateField, String cat,
