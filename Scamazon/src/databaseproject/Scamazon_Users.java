@@ -50,7 +50,7 @@ public class Scamazon_Users {
 			cart.clear();
 
 		} catch (Exception e) {
-			System.out.println(e);
+
 		}
 	}
 
@@ -95,7 +95,7 @@ public class Scamazon_Users {
 						} else if (Integer.parseInt(items.getString(4)) == 0) {
 							System.out.print("This item is out of stock\n");
 						} else if (Integer.parseInt(items.getString(4)) < 5) {
-							System.out.print("Supply: " + items.getString(4) + ",Rating: " + items.getString(6) + "\n");
+							System.out.print("Supply: " + items.getString(4) + ", Rating: " + items.getString(6) + "\n");
 						}
 						System.out.println(items.getString(5));
 						System.out.println("---------------------------------------\n");
@@ -116,7 +116,7 @@ public class Scamazon_Users {
 				}
 			}
 		} catch (Exception e) {
-			System.out.println(e);
+
 		}
 	}
 
@@ -206,9 +206,9 @@ public class Scamazon_Users {
 							.executeQuery("Select userEmail from users where userid =" + "'" + userID + "'");
 					userData.next();
 					stat1.executeUpdate(
-							"insert into orders(userID, userEmail, orderedOn, shippedBy)" + " values(" + "'" + userID
-									+ "','" + userData.getString(1) + "', '" + java.time.LocalDate.now() + "', 'UPS')");
-
+							"insert into orders(userID, userEmail, orderedOn, shippedBy, shippedOn)" + " values(" + "'" + userID
+									+ "','" + userData.getString(1) + "', '" + java.time.LocalDate.now() + "', 'UPS', '" +
+									java.time.LocalDate.now().plusDays(1) +"')");
 					// update orderdetails
 
 					for (int i = 0; i < cart.size(); i++) {
@@ -229,7 +229,7 @@ public class Scamazon_Users {
 				System.out.println("The cart is empty.\n");
 			}
 		} catch (Exception e) {
-			System.out.println(e);
+
 		}
 	}
 

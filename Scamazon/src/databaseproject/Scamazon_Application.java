@@ -35,7 +35,7 @@ public class Scamazon_Application {
 			System.out.println("Now exiting. Thank you for choosing Scamazon");
 			user.close();
 		} catch (Exception e) {
-			System.out.println(e);
+
 		}
 	}
 
@@ -85,7 +85,7 @@ public class Scamazon_Application {
 				System.out.println("Either the Username doesn't exist or the Password was incorrect.\n");
 			}
 		} catch (Exception e) {
-			System.out.println(e);
+
 		}
 	}
 
