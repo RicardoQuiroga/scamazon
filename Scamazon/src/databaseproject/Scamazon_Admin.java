@@ -14,12 +14,12 @@ public class Scamazon_Admin {
 
     public static void adminOptions(Connection myCon, Scanner user) throws SQLException {
         int switchSel = 0;
-        while (switchSel != 4) {
+        while (switchSel != 1) {
             System.out.println("---------------------------------------");
             System.out.println("Select what you would like to edit:");
-            System.out.println("1: Categories\n2: Employees \n3: Users\n4: exit\n");
+            System.out.println("1: Categories\n2: Employees\n3: exit\n");
             String selection = user.nextLine();
-            while (selection.compareTo("") == 0 || checkInt(selection) < 0 || checkInt(selection) > 4) {
+            while (selection.compareTo("") == 0 || checkInt(selection) < 0 || checkInt(selection) > 3) {
                 System.out.println("Error: You must input an integer provided above!\n");
                 selection = user.nextLine();
             }
@@ -37,11 +37,6 @@ public class Scamazon_Admin {
                     modEmployees(myCon, user);
                     break;
                 case 3:
-                    System.out.println("Modifying users");
-                    System.out.println("---------------------------------------");
-
-                    break;
-                case 4:
                     System.out.println("Exiting");
                     System.out.println("---------------------------------------");
                     return;
@@ -51,12 +46,12 @@ public class Scamazon_Admin {
 
     public static void modCategories(Connection myCon, Scanner user) throws SQLException {
         int switchSel = 0;
-        while (switchSel != 3) {
+        while (switchSel != 4) {
             System.out.println("---------------------------------------");
             System.out.println("Select a modification option:");
-            System.out.println("1: Add a category\n2: Delete a category\n3: exit\n");
+            System.out.println("1: Add a category\n2: Delete a category\n3: Edit category manager\n4: Exit\n");
             String selection = user.nextLine();
-            while (selection.compareTo("") == 0 || checkInt(selection) < 0 || checkInt(selection) > 3) {
+            while (selection.compareTo("") == 0 || checkInt(selection) < 0 || checkInt(selection) > 4) {
                 System.out.println("Error: You must input an integer provided above!\n");
                 selection = user.nextLine();
             }
@@ -80,7 +75,7 @@ public class Scamazon_Admin {
                     System.out.println("\nSelect an employee to have manage " + newCat + ":");
                     Statement stat = myCon.createStatement();
                     ResultSet rs = stat.executeQuery("SELECT empID, empName FROM emp WHERE empID <> 1;");
-                    int count = 0;
+                    int count = 1;
                     while (rs.next()) {
                         System.out.println(rs.getInt(1) + ": " + rs.getString(2));
                         count++;
@@ -113,7 +108,7 @@ public class Scamazon_Admin {
                     System.out.println("Select a category you would like to delete:");
                     Statement statDel = myCon.createStatement();
                     ResultSet rsDel = statDel.executeQuery("SELECT category, categoryName FROM categories;");
-                    int delCount = 0;
+                    int delCount = 1;
                     while (rsDel.next()) {
                         System.out.println(rsDel.getInt(1) + ": " + rsDel.getString(2));
                         delCount++;
@@ -139,6 +134,43 @@ public class Scamazon_Admin {
                     statDel.execute("commit");
                     break;
                 case 3:
+                    System.out.println("Editing a category manager\n---------------------------------------");
+                    System.out.println("Select a category to change:");
+                    Statement statEd = myCon.createStatement();
+                    ResultSet rsEd = statEd.executeQuery("SELECT category, categoryName FROM categories;");
+                    int edCount = 1;
+                    while (rsEd.next()) {
+                        System.out.println(rsEd.getInt(1) + ": " + rsEd.getString(2));
+                        edCount++;
+                    }
+                    System.out.println();
+                    String edChoice = user.nextLine();
+                    while (edChoice.compareTo("") == 0 || checkInt(edChoice) < 0 || checkInt(edChoice) > edCount) {
+                        System.out.println("Error: You must input an integer provided above!\n");
+                        edChoice = user.nextLine();
+                    }
+                    System.out.println("Select a manager you would like to manage that category:");
+                    ResultSet rsMan = statEd.executeQuery("SELECT empID, empName FROM emp WHERE empID <> 1;");
+                    int manCount = 1;
+                    while (rsMan.next()) {
+                        System.out.println(rsMan.getInt(1) + ": " + rsMan.getString(2));
+                        manCount++;
+                    }
+                    System.out.println();
+                    String manChoice = user.nextLine();
+                    while (manChoice.compareTo("") == 0 || checkInt(manChoice) < 2 || checkInt(manChoice) > manCount) {
+                        System.out.println("Error: You must input an integer provided above!");
+                        manChoice = user.nextLine();
+                    }
+                    statEd.execute("start transaction");
+                    if (statEd.executeUpdate("UPDATE categories SET empID = " + checkInt(manChoice)
+                            + " WHERE category = " + checkInt(edChoice) + ";") != 0)
+                        System.out.println("Updated successfully!");
+                    else
+                        System.out.println("Error: could not update.");
+                    statEd.execute("commit");
+                    break;
+                case 4:
                     System.out.println("Exiting...");
                     break;
             }
@@ -213,7 +245,7 @@ public class Scamazon_Admin {
                     }
                     deactCount++;
                     String deact = user.nextLine();
-                    while (deact.compareTo("") == 0 || checkInt(deact) < 0 || checkInt(deact) > deactCount) {
+                    while (deact.compareTo("") == 0 || checkInt(deact) < 2 || checkInt(deact) > deactCount) {
                         System.out.println("Error: You must input an integer provided above!\n");
                         deact = user.nextLine();
                     }
@@ -241,7 +273,7 @@ public class Scamazon_Admin {
                     }
                     modCount++;
                     String empSel = user.nextLine();
-                    while (empSel.compareTo("") == 0 || checkInt(empSel) < 0 || checkInt(empSel) > modCount) {
+                    while (empSel.compareTo("") == 0 || checkInt(empSel) < 2 || checkInt(empSel) > modCount) {
                         System.out.println("Error: You must input an integer provided above!\n");
                         empSel = user.nextLine();
                     }
@@ -252,14 +284,13 @@ public class Scamazon_Admin {
                     String fEmpPass = null;
                     String fEmpAddress = null;
                     int fEmpSalary = 0;
-                    while (found.next()) {
+                    if (found.next()) {
                         fEmpName = found.getString(1);
                         fEmpPass = found.getString(2);
                         fEmpAddress = found.getString(3);
                         fEmpSalary = found.getInt(4);
                     }
-                    System.out.println(fEmpName + fEmpPass + fEmpAddress + fEmpSalary);
-                    System.out.println("Select which field you would like to modify:");
+                    System.out.println("\nSelect which field you would like to modify:");
                     System.out.println("1: Name\n2: Password\n3: Address\n4: Salary");
                     String fieldSel = user.nextLine();
                     while (fieldSel.compareTo("") == 0 || checkInt(fieldSel) < 0 || checkInt(fieldSel) > 4) {
@@ -304,8 +335,7 @@ public class Scamazon_Admin {
         System.out.println("Enter 'confirm' to confirm the change:");
         if (user.nextLine().compareToIgnoreCase("confirm") == 0) {
             System.out.println("Making changes...\n");
-            if (checkInt(oldVal) < 0)
-                updateContent = "'" + updateContent + "'";
+            updateContent = "'" + updateContent + "'";
         } else {
             System.out.println("Aborting changes...\n");
             System.out.println("---------------------------------------");

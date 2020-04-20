@@ -70,10 +70,10 @@ CREATE TABLE `scamazon`.`categories` (
     FOREIGN KEY (`empID`) REFERENCES `scamazon`.`emp` (`empID`)
 );
 
-INSERT INTO `scamazon`.`categories` VALUES (1, 'Books', 2, 'Books that you probably don''t want to read!'),
-(2, 'Movies', 1, 'Movies that are all around considered bad!'),
+INSERT INTO `scamazon`.`categories` VALUES (1, 'Books', 3, 'Books that you probably don''t want to read!'),
+(2, 'Movies', 2, 'Movies that are all around considered bad!'),
 (3, 'Videogames', 5, 'Only the best videogames with a 50% or below average review score!'),
-(4, 'Hardware', 3, 'Gadgets and doodads that probably won''t blow up..');
+(4, 'Hardware', 4, 'Gadgets and doodads that probably won''t blow up..');
 
 /* All products sold are on-hand, so handling restocking through the database is unnecessary */
 

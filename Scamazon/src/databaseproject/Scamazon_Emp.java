@@ -168,11 +168,11 @@ public class Scamazon_Emp {
 			}
 
 			// Remove item
-			if (stat.executeUpdate("DELETE FROM items WHERE itemName = '" + curInfo + "';") == 0) {
-				System.out.println("\nError: Something went wrong when adding to the database.");
+			if (stat.executeUpdate("UPDATE items SET itemStock = 0 WHERE itemName = '" + curInfo + "';") == 0) {
+				System.out.println("\nError: Something went wrong when removing from the database.");
 				System.out.println("---------------------------------------");
 			} else {
-				System.out.println("\nSuccessfully removed " + curInfo + " to items!");
+				System.out.println("\nSuccessfully removed " + curInfo + " from items!");
 				System.out.println("---------------------------------------");
 			}
 		} catch (Exception e) {
@@ -237,15 +237,13 @@ public class Scamazon_Emp {
 					modString(myCon, user, curInfo, updateField, "name", fItemName);
 					break;
 				case 2:
-					modInt(myCon, user, curInfo, updateField, "category",
-							Double.parseDouble(Integer.toString(fItemCategory)));
+					modString(myCon, user, curInfo, updateField, "category", Integer.toString(fItemCategory));
 					break;
 				case 3:
-					modInt(myCon, user, curInfo, updateField, "price", fItemPrice);
+					modString(myCon, user, curInfo, updateField, "price", Double.toString(fItemPrice));
 					break;
 				case 4:
-					modInt(myCon, user, curInfo, updateField, "stock",
-							Double.parseDouble(Integer.toString(fItemStock)));
+					modString(myCon, user, curInfo, updateField, "stock", Integer.toString(fItemStock));
 					break;
 				case 5:
 					modString(myCon, user, curInfo, updateField, "description", fItemDesc);
@@ -257,7 +255,7 @@ public class Scamazon_Emp {
 	}
 
 	public static void modString(Connection myCon, Scanner user, String curInfo, String updateField, String cat,
-			String thing) throws SQLException {
+			String oldVal) throws SQLException {
 		Statement stat = myCon.createStatement();
 		System.out.println("\nEnter the new " + cat + ":");
 		String updateContent = user.nextLine();
@@ -265,7 +263,7 @@ public class Scamazon_Emp {
 			System.out.println("Error: you must input something!");
 			updateContent = user.nextLine();
 		}
-		System.out.println("\nORIGINAL " + cat.toUpperCase() + ": " + thing + " | NEW " + cat.toUpperCase() + ": "
+		System.out.println("\nORIGINAL " + cat.toUpperCase() + ": " + oldVal + " | NEW " + cat.toUpperCase() + ": "
 				+ updateContent + "\nEnter 'confirm' to confirm the change:");
 		if ((user.nextLine()).compareToIgnoreCase("confirm") == 0) {
 			System.out.println("Making changes...\n");
@@ -283,34 +281,6 @@ public class Scamazon_Emp {
 
 		}
 		System.out.println("---------------------------------------");
-	}
-
-	public static void modInt(Connection myCon, Scanner user, String curInfo, String updateField, String cat,
-			Double thing) throws SQLException {
-		Statement stat = myCon.createStatement();
-		System.out.println("\nEnter the new " + cat + ":");
-		Double updateContent = checkDouble(user.nextLine());
-		while (updateContent < 0) {
-			System.out.println("Error: you must input an an integer/float value!");
-			updateContent = checkDouble(user.nextLine());
-		}
-		System.out.println("\nORIGINAL " + cat.toUpperCase() + ": " + thing + " | NEW " + cat.toUpperCase() + ": "
-				+ updateContent + "\nEnter 'confirm' to confirm the change:");
-		if ((user.nextLine()).compareToIgnoreCase("confirm") == 0) {
-			System.out.println("Making changes...\n");
-		} else {
-			System.out.println("Aborting changes...\n");
-			System.out.println("---------------------------------------");
-		}
-		if (stat.executeUpdate("UPDATE items SET " + updateField + " = " + updateContent + " WHERE itemName = '"
-				+ curInfo + "';") == 0) {
-			System.out.println("Error: could not update.");
-			System.out.println("---------------------------------------");
-		} else {
-			System.out.println("Updated succesfully!");
-			System.out.println("---------------------------------------");
-		}
-
 	}
 
 	public static int checkArray(int[] arr, int v) {
